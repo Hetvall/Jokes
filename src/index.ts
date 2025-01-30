@@ -1,5 +1,7 @@
-import { Jokes, SingleJoke, TwoPartJoke } from "./index.interface";
+import { SingleJoke, TwoPartJoke } from "./index.interface.js";
+import { JokeService } from "./joke.service.js";
 
+// Getting html elements from DOM
 let showSetUpJokeElement =
   document.querySelector<HTMLElement>(".show__setUp__joke")!;
 
@@ -15,32 +17,32 @@ let showJokesButton = document.getElementById("btnJoke")!;
 
 let showDetailJokeButton = document.getElementById(" btnDetail")!;
 
-// Fetch jokes from API
-async function fetchJokes(): Promise<Jokes> {
-  const response = await fetch(`https://v2.jokeapi.dev/joke/Any?lang=es`);
-  const data = await response.json();
-  return data;
-}
+// Calling the service by creating an instance of the class
+const jokeService = new JokeService();
 
 // Show jokes
 const showJokes = async (): Promise<void> => {
-  const joke = await fetchJokes();
+  try {
+    const joke = await jokeService.fetchJokes("es");
 
-  const singleJoke = joke as SingleJoke;
-  const twoPartJoke = joke as TwoPartJoke;
+    const singleJoke = joke as SingleJoke;
+    const twoPartJoke = joke as TwoPartJoke;
 
-  if (joke.type === "single") {
-    showSingleJokeElement.innerHTML = `${singleJoke.joke}`;
-  } else if (joke.type === "twopart") {
-    showSetUpJokeElement.innerHTML = `${twoPartJoke.setup}`;
+    if (joke.type === "single") {
+      showSingleJokeElement.innerHTML = `${singleJoke.joke}`;
+    } else if (joke.type === "twopart") {
+      showSetUpJokeElement.innerHTML = `${twoPartJoke.setup}`;
 
-    showDetailButton();
+      showDetailButton();
 
-    showDetailJokeButton.addEventListener("click", () => {
-      showDeliveryJokeElement.innerHTML = `${twoPartJoke.delivery}`;
-    });
-  } else {
-    throw new Error("No jokes found");
+      showDetailJokeButton.addEventListener("click", () => {
+        showDeliveryJokeElement.innerHTML = `${twoPartJoke.delivery}`;
+      });
+    } else {
+      throw new Error("No jokes found");
+    }
+  } catch (error) {
+    console.error("Error displaying the jokes", error);
   }
 };
 

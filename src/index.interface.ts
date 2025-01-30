@@ -19,7 +19,7 @@ export interface TwoPartJoke extends Jokes {
   delivery: string;
 }
 
-export interface Flags {
+interface Flags {
   nsfw: boolean;
   religious: boolean;
   political: boolean;
